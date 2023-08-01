@@ -25,4 +25,4 @@ jobs:
       - name: Sync code with AWS CodeCommit
         run: |
           git remote add codecommit https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/Demo
-          git push codecommit HEAD:refs/heads/main
+          git push codecommit HEAD:refs/heads/master
