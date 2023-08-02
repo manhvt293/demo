@@ -1,28 +1,37 @@
-name: Sync Code to AWS CodeCommit
+# This is a basic workflow to help you get started with Actions
+name:
+  Connect to an AWS role from a GitHub repository
 
+# Controls when the action will run. Invokes the workflow on push events but only for the main branch
 on:
   push:
     branches:
       - '*'
+  pull_request:
+    branches:
+      - '*'
 
+env:
+  
+  AWS_REGION : ap-southeast-1 #Change to reflect your Region
+
+# Permission can be added at job level or workflow level    
+permissions:
+      id-token: write   # This is required for requesting the JWT
+      contents: read    # This is required for actions/checkout
 jobs:
-  sync:
+  AssumeRoleAndCallIdentity:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Configure AWS credentials
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_SECRET_ACCESS_KEY }}
+      - name: Git clone the repository
+        uses: actions/checkout@v3
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
+        with:
+          role-to-assume: arn:aws:iam::410078163348:role/Sync_codecommit_from_github #change to reflect your IAM role’s ARN
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ap-southeast-1
+      # Hello from AWS: WhoAmI
+      - name: Sts GetCallerIdentity
         run: |
-          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-          aws configure set default.region ap-southeast-1  # Change to your desired AWS region
-
-      - name: Sync code with AWS CodeCommit
-        run: |
-          git remote add codecommit https://thiendang-at-410078163348@git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/Watiga-Demo
-          git push codecommit HEAD:refs/heads/master
+          aws sts get-caller-identity
