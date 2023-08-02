@@ -1,17 +1,28 @@
-name: Sync Repository to AWS CodeCommit
+name: Sync Code to AWS CodeCommit
 
 on:
   push:
-    branches: [ "**" ]
+    branches:
+      - '*'
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
+
     steps:
-      - name: Sync to AWS CodeCommit
-        uses: shubhdarlinge/sync-repository-to-aws-codecommit@v2
-        with:
-          role-to-assume: arn:aws:iam::1234567890:role/FakeRepositorySyncRole
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set default.region ap-southeast-1  # Change to your desired AWS region
+
+      - name: Sync code with AWS CodeCommit
+        run: |
+          git remote add codecommit https://thiendang-at-410078163348@git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/Watiga-Demo
+          git push codecommit HEAD:refs/heads/master
