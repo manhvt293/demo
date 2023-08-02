@@ -31,3 +31,5 @@ jobs:
         with:
           repository_name: demo
           aws_region: ap-southeast-1
+          branch: 
+            '*'
