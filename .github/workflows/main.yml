@@ -11,6 +11,12 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Install GIT
+        run: |
+          # install GIT, as without it checkout would use REST API
+          apt update
+          apt install -y \
+            git
       - name: Checkout
         uses: actions/checkout@v3
         with:
