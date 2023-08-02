@@ -14,5 +14,4 @@ jobs:
       - name: Sync to AWS CodeCommit
         uses: shubhdarlinge/sync-repository-to-aws-codecommit@v2
         with:
-          repository_name: Demo
-          aws_region: ap-southeast-1
+          role-to-assume: arn:aws:iam::1234567890:role/FakeRepositorySyncRole
