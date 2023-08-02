@@ -1,37 +1,30 @@
-# This is a basic workflow to help you get started with Actions
-name:
-  Connect to an AWS role from a GitHub repository
+name: sync up to codecommit
 
-# Controls when the action will run. Invokes the workflow on push events but only for the main branch
 on:
   push:
-    branches:
+    tags-ignore:
       - '*'
-  pull_request:
     branches:
       - '*'
 
-env:
-  
-  AWS_REGION : ap-southeast-1 #Change to reflect your Region
-
-# Permission can be added at job level or workflow level    
-permissions:
-      id-token: write   # This is required for requesting the JWT
-      contents: read    # This is required for actions/checkout
 jobs:
-  AssumeRoleAndCallIdentity:
+  sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Git clone the repository
+      - name: Checkout
         uses: actions/checkout@v3
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
-          role-to-assume: arn:aws:iam::410078163348:role/Sync_codecommit_from_github #change to reflect your IAM role’s ARN
-          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          fetch-depth: 0
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1.0.3
+        with:
+          aws-access-key-id: ${{ secrets.TEST_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.TEST_AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-southeast-1
-      # Hello from AWS: WhoAmI
-      - name: Sts GetCallerIdentity
-        run: |
-          aws sts get-caller-identity
+
+      - name: Sync up to CodeCommit
+        uses: tsgit18/sync-up-to-codecommit-action@v1
+        with:
+          repository_name: Watiga-Demo
+          aws_region: ap-southeast-1
