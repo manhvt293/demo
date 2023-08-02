@@ -31,3 +31,5 @@ jobs:
         with:
           repository_name: Watiga-Demo
           aws_region: ap-southeast-1
+      - name: Display Deleted Branch
+        run: echo "The branch ${{ github.ref }} was deleted."    
