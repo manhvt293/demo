@@ -19,6 +19,9 @@ jobs:
       - name: Fix git safe.directory in container
         run: mkdir -p /home/runner/work/_temp/_github_home && printf "[safe]\n\tdirectory = /github/workspace" > /home/runner/work/_temp/_github_home/.gitconfig    
 
+      - name: Display Deleted Branch
+        run: echo "The branch ${{ github.ref }} was deleted."  
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -31,5 +34,4 @@ jobs:
         with:
           repository_name: Watiga-Demo
           aws_region: ap-southeast-1
-      - name: Display Deleted Branch
-        run: echo "The branch ${{ github.ref }} was deleted."    
+          
